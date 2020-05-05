@@ -13,6 +13,7 @@ connect by level <=24
     )
     SELECT tmp.hour as HOUR ,count(a.ANIMAL_ID) as COUNT
     FROM ANIMAL_OUTS a 
-    right join tmp on tmp.hour = EXTRACT(HOUR from CAST(a.datetime AS TIMESTAMP))
+   -- right join tmp on tmp.hour = EXTRACT(HOUR from CAST(a.datetime AS TIMESTAMP))
+    right join tmp on tmp.hour = TOCHAR(datetime,'hh24')  --개선된 식
     group by tmp.hour
     order by tmp.hour

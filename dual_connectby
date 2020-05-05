@@ -1,0 +1,18 @@
+@프로그래머스 SQL 입양시각구하기(2)
+* 입양되지않은 시각도 출력 행(row)에 포함되야함이 핵심 문제이다. 
+이를 위해 WITH 로 임시로 0부터23까지의 값이 든 한개의 열, 24개의 행으로 이루어진 임시테이블 'tmp'를 만든다.
+이때 사용한 기법으로는 dual - connect by level 이다. 
+그리고나서 원래 테이블과 tmp를 join 시켜주고 group by로 원하는 테이블의 형태를 찾는다. 
+이때 반드시 tmp.hour로 그룹핑을 해주어야하는데, 이유는 0부터 23까지 빠짐없이 출력해내기 위해서이다. count값이 null이면 0으로 처리됨을 참고하자.
+마지막으로 문제 조건을 충족시키기 위해 order by 로 오름차순으로 정렬시킨다. order by의 default는 오름차순(asc)이다.
+
+WITH tmp(hour) as(
+SELECT level-1 as hour
+FROM dual
+connect by level <=24
+    )
+    SELECT tmp.hour as HOUR ,count(a.ANIMAL_ID) as COUNT
+    FROM ANIMAL_OUTS a 
+    right join tmp on tmp.hour = EXTRACT(HOUR from CAST(a.datetime AS TIMESTAMP))
+    group by tmp.hour
+    order by tmp.hour
